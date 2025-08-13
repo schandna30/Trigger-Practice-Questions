@@ -1,7 +1,7 @@
 public with sharing class caseTriggerHandler {
 public static void updateCase(List<Case> newCases){
 
-/*Create a Salesforce trigger that automatically searches for a Contact based on 
+/* Question:3 Create a Salesforce trigger that automatically searches for a Contact based on 
 the Web Email field of a Case when the Case is created, 
 and then populates the Contact field on the Case object with the matching Contact.*/
 if(!newCases.isEmpty()){
@@ -32,4 +32,37 @@ if(!newCases.isEmpty()){
         }
     }
 }
-}}
+}
+
+/* Question 4:
+Create a Salesforce trigger that automatically searches for an Account based on the Phone field of a
+ Case when the Case is created, and then populates the Account field on the Case object with the matching Account.*/
+
+ public static void updateAccountOnCase(List<Case> newCaseList){
+  // get the phone feild from the cases to be created
+  Set<String> PhoneList = new Set<String>();
+  if(!newCaseList.isEmpty()){
+    for(Case caserec:newCaseList ){
+      if(String.isNotBlank(caserec.SuppliedPhone)){
+        PhoneList.add(caserec.SuppliedPhone);
+      }
+    }
+  }
+  //get accounts based on phone feild
+  Map<String,Id> phoneMap= new Map<String,Id>();
+      for (Account acc: [select id , Phone from account where Phone in: PhoneList]){
+        phoneMap.put(acc.Phone,Acc.Id);
+    }
+
+
+  //populate the case with the account id
+      for(Case caserec:newCaseList ){
+      if(String.isNotBlank(caserec.SuppliedPhone)){
+       if(phoneMap.containsKey(caserec.SuppliedPhone)){
+       caserec.AccountId= phoneMap.get(caserec.SuppliedPhone);
+       }
+      }
+    }
+
+ }
+}
