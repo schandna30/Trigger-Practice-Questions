@@ -57,7 +57,25 @@ If AnnualRevenue is greater than or equal to 10,000,000, set Rating to Hot.*/
     }
     
 
- 
+//  Whenever Account’s Phone field is updated then all related Contact’s phone field should
+// also get updated with Parent Account’s Phone.
+/* -------UPDATE CHILD BY PARENT---------*/
+public static void ContatUpdate(Map<Id,Account> newAccount, Map<Id,Account> oldAccount){
+    List<Account> accList = new List<Account>();
+    List<Contact> conList = new List<Contact>();
+    accList= [select id , name (select id , AccountId from Contacts) where id in: newAccount.keySet()];
+    for (Account acc: accList){
+        Account newAccount= newAccount.get(acc.Id);
+    for (Contact con:Contacts){
+        con.phone= newAccount.phone;
+        conList.add(con);
+    }
+        
+    }
+
+}
+
+
 
 
 }

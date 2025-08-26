@@ -1,5 +1,5 @@
 public with sharing class contactTriggerHandler {
-    public static void afterInsert(List<contact> newconList){
+   /* public static void afterInsert(List<contact> newconList){
         set<id> accIdSet = new Set<Id>();
         //get all the contacts which have account id, not all contacts might have account
         for (Contacts con : newConList){
@@ -56,5 +56,39 @@ public with sharing class contactTriggerHandler {
 
             }
         }
+    }
+
+
+    /* Whenever a Contact’s description is updated then its Parent Account’s 
+    description should also get updated by it.*/
+    /* -------UPDATE PARENT BY CHILD---------*/
+    public static void UpdateAccountFromContact(List<Contact> conList,Map<Id,Contact> oldMap){
+        // Get all the  parent records in a set
+        set<Id> accIdSet= new set<Id>();
+        for(Contact con: conList){
+            Contact oldCon= oldMap.get(con.Id);
+         
+            if(string.isNotBlank(con.AccountId) && con.Description!=oldCon.Description){//also check if user updatedd the description value
+
+                accIdSet.add(con.AccountId);
+            }
+        }
+    
+        // create a map of parent record id and description
+            Map<Id, String> accIdToDescMap = new Map<Id, String>();
+            for(Contact con: conList){
+                if(con.AccountId!=null && con.Description!=null){
+                    accIdToDescMap.put(con.AccountId,con.Description);
+                }
+            }
+        // itrate over the map to update accounts
+            List <Account> accList =[select id , Description from Account where id in:accIdSet];
+        for ( Account acc :accList){
+            if(accIdToDescMap.containsKey(acc.Id)){
+                acc.Description=accIdToDescMap.get(acc.Id);
+            }
+
+        }
+        update accList;
     }
 }
