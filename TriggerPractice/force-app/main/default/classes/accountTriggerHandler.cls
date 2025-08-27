@@ -23,7 +23,7 @@ If AnnualRevenue is greater than or equal to 10,000,000, set Rating to Hot.*/
     // accList.add(acc);
 }
     }
-    // // "Write a trigger: If the phone number on an Account is updated, 
+  /*  // // "Write a trigger: If the phone number on an Account is updated, 
     // update the related Contacts with the new phone number, but only if their phone 
     // // numbers are currently blank or match the old phone number of the Account."/
 
@@ -60,7 +60,7 @@ If AnnualRevenue is greater than or equal to 10,000,000, set Rating to Hot.*/
 //  Whenever Account’s Phone field is updated then all related Contact’s phone field should
 // also get updated with Parent Account’s Phone.
 /* -------UPDATE CHILD BY PARENT---------*/
-public static void ContatUpdate(Map<Id,Account> newAccount, Map<Id,Account> oldAccount){
+/*public static void ContatUpdate(Map<Id,Account> newAccount, Map<Id,Account> oldAccount){
     List<Account> accList = new List<Account>();
     List<Contact> conList = new List<Contact>();
     accList= [select id , name (select id , AccountId from Contacts) where id in: newAccount.keySet()];
@@ -73,8 +73,45 @@ public static void ContatUpdate(Map<Id,Account> newAccount, Map<Id,Account> oldA
         
     }
 
+}*/
+//Prevent duplication of record based on the name
+//before insert 
+//Check if the record exists with the same name
+// throw a error that the same account exists
+public static void duplicateAccount(List<Account> newAccList){
+   Set<String> accNames = new Set<String>();
+for(Account acc : newAccList){
+    if(acc.Name != null){
+        accNames.add(acc.Name);
+    }
 }
 
+List<Account> existingAccList = [SELECT Id, Name FROM Account WHERE Name IN :accNames];   if(!newList.isEmpty())
+        for (Account acc : newAccList){
+            if(acc)
+            acc.addError('Duplicate value');
+        }
+    }
+}
+// "Write an apex trigger to hold user from modifying account 
+//again until 1 hour is passed"
+// Also check if the same user has updated or not
+// Trigger Before update
+public static void preventAccountUpdation(List<Account> accList, Map<Id,Account> oldMap){
+    // we have to check if the old value of the lastModified System.now();
+    Id currentUserId = userInfo.getUserId();
+    if(!accList.isEmpty()){
+    for(Account acc : accList)
+    {  if(oldMap!=null){
+         Account oldAccount =oldMap.get(acc.id);
+         if(oldAccount.LastModifiedById==currentUserId){
+        Datetime dt1 =oldAccount.LastModifiedDate;
+        Integer diff = System.now().getTime - dt1.getTime();
+        if(diffSeconds<1){
+            addError('last Modified 1 hr ago');
+        }}
+    }}
+}}
 
 
 

@@ -6,6 +6,7 @@ trigger accountTrigger on Account (before insert, after update) {
 
     if(trigger.isBefore && trigger.isInsert){
         accountTriggerHandler.setAccountRating(trigger.new);
+        accountTriggerHandler.duplicateAccount(trigger.new);
    }
    if(trigger.isAfter && trigger.isUpdate){
         accountTriggerHandler.updateContacts(trigger.newMap,trigger.oldMap);
