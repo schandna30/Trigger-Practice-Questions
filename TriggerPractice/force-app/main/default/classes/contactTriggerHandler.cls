@@ -91,4 +91,31 @@ public with sharing class contactTriggerHandler {
         }
         update accList;
     }
+    // We have Primary_Contact__c checkbox field on contact object. Ensure only one primary contact present on Account if user try to maintain more than one primary Contact then show error.
+    public static void primaryContact(List<Contact> newList){
+        //Get the parent Account records
+        Set<Id> accIds = new Set<Id>();
+        if(!newList.isEmpty()){
+        for(Contact con: newList){
+            if(con.AccountId!= null && con.Primary_Contact__c== true){
+                accIds.add(con.AccountId);
+            }
+        }}
+        //check if there is any other primary record in Parent Account
+        if(!accIds.isEmpty()){
+        for(Accounts acc: [select id , name ,(select id , name , AcocuntId ,Primary_Contact__c from Contacts ) from Account where id in: accIds]){
+            for(Contact con : acc.Contacts){
+                Boolean hasPrimary = false;
+               if(con.Primary_Contact__c==true){
+                hasPrimary = true;
+               }
+               
+            }
+
+
+        }}
+        // add error if we find any other primary account
+    }
+
+
 }

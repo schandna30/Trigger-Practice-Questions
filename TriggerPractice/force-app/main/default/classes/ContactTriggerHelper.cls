@@ -1,5 +1,5 @@
-public with sharing AccountHelper{
-    public void removeContact(List<Account> oldAccount){
+public with sharing class ContactTriggerHelper {
+   public static void removeContact(List<Account> oldAccount){
         Set<id> accIds = new Set<Id>();
         for(Account acc: oldAccount){
             if(!oldAccount.isEmpty()){
@@ -7,14 +7,14 @@ public with sharing AccountHelper{
         }
         List<Contact> conToUpdate = new List<Contact>();
 
-        for(Account acc :[select id , name , (select id ,name from Contacts) from account where id in:accIds  ){
+        for(Account acc :[select id , name , (select id ,name from Contacts) from account where id in:accIds] ){
             
-            if(!contacts.isEmpty){
+       
                 for(Contact con : acc.Contacts){
-                    con.AccountId='';
+                    con.AccountId=null;
                     conToUpdate.add(con);
                 }
-            }
+            
 
 
         }

@@ -1,4 +1,4 @@
-trigger contactTrigger on Contact ( after insert, after update, after delete, after undelete) {
+trigger contactTrigger on Contact ( after insert, after update, after delete, after undelete, before insert, before Update) {
     switch on trigger.operationType {
         when AFTER_INSERT {
            // contactTriggerHandler.afterInsert(trigger.new);
@@ -13,6 +13,10 @@ trigger contactTrigger on Contact ( after insert, after update, after delete, af
         }
         When AFTER_UNDELETE{
             //contactTriggerHandler.afterUndelete(trigger.new);
+        }
+        if( trigger.isBefore &&( trigger.isUpdate || trigger.isInsert)){
+            if(trigger.isInsert){
+            contactTriggerHandler.primaryContact(trigger.new)}
         }
     }
 
