@@ -92,7 +92,7 @@ List<Account> existingAccList = [SELECT Id, Name FROM Account WHERE Name IN :acc
             acc.addError('Duplicate value');
         }
     }
-}
+
 // "Write an apex trigger to hold user from modifying account 
 //again until 1 hour is passed"
 // Also check if the same user has updated or not
@@ -112,8 +112,54 @@ public static void preventAccountUpdation(List<Account> accList, Map<Id,Account>
         }}
     }}
 }}
-
-
-
+// "Write a trigger to prevent deletion of an Account that has Contact marked as Potential Buyer"
+public static void preventDeletion(Map<Id,Account> oldMap){
+    //get all the related contacts
+    Map<Id,Boolean> conMap= new Map<Id,Boolean>();
+    set<id> accIds = oldMap.keySet();
+    //check if those contacts has PotentialBuyer Marked true
+    //Throw Error
+    List<Account> accList= oldmap.keySet();
+    for(Account acc:[select id , name ,(select id,Potential_buyer__c from contacts) from Account where id in: accIds]){
+        Boolean HasPotentialBuyer=false;
+        for(Contact con: acc.Contacts){
+             if(con.Potential_buyer__c){
+                HasPotentialBuyer=true;
+                break;
+             }
+        }
+        if(HasPotentialBuyer){
+            oldMap.get(acc.Id).addError('Cannot delete acount')
+        }
+    }
+  
 }
+//Trigger to create a related Contact of Account with same phone as Account’s phone 
+//if custom checkbox field on Account is checked.
+public static void createContactafterUpdate(List<Account> newList,Map<Id,Account> oldMap){
+//check if account is checkbox is update
+//checck if Account phn field is not blank
+//create contact records
+//insert contact records
+List<Contact> conList= new List<Contact>();
+if(!newList.isEmpty()){
+    for(Account acc: newList){
+         Account oldAccount= oldMap.get(acc.id);
+         if(acc.custom__c  && !oldAccount.custom__c && acc.Phone!= null)
+         {
+            Contact con= new Contact();
+            con.AccountId= acc.Id;
+            con.LastName='Test'+acc.Id;
+            con.Phone=acc.Phone;
+            conList.add(con);
+         }
+    }
+    if(!conList.isEmpty()){
+        insert conList;
+    }
+}
+}
+}
+
+
 
