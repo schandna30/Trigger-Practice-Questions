@@ -3,7 +3,21 @@
         <lightning-datatable
             key-field="Id"
             columns={columns}
-            data={contacts.data}>
+            data={contacts}>
         </lightning-datatable>
+        <lightning-input
+        label='Serach Contact'
+        value={contactKey}
+        onchange={handleSearchKey}
+        >
+
+        </lightning-input>
+        <lightning-button
+        label='Search'
+        onclick={handleSearch}
+        variant="brand"
+        >
+
+        </lightning-button>
     </lightning-card>
 </template>
