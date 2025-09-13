@@ -161,6 +161,18 @@ if(!newList.isEmpty()){
 
 
 }
+//prevent user from deleting an old acocunt
+// run this on before delete
+public static void preventDeletion(List<Account> oldList){
+    set<Id> activeAccountIds = new Set<Id>();
+    for(Account acc : oldList){
+        if(acc.isActive__c == true){
+          addError('Active account cannot be deleted');
+        }
+    }
+
+
+}
 }
 
 
