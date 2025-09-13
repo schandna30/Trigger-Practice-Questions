@@ -65,4 +65,32 @@ Create a Salesforce trigger that automatically searches for an Account based on 
     }
 
  }
+//When a Case is inserted on any Account, put the latest Case Number on the Account in Latest Case Inserted field.
+// run after insert beacuse we are updaitng related records
+public static void updateAccountfield(List<Case> newList){
+  Map<id,Integer> caseAccMap= new Map<id,Integer>();
+  set<Id> accountIds= new set<Id>();
+  if(!newList.isEmpty()){
+  for ( Case cases: newList){
+//case oldrecord= oldcases.get(cases.Id);
+if(cases.AccountId!= null){
+  caseAccMap.put(cases.AccountId,cases.Name);
+  //accountIds.add(casesAccountId)
+  
+}
+List<Account> accToBeUpdated = new List<Account>();
+for (Account acc: [select id , name from Account where id in :caseAccMap.keySet()]){
+  if(caseAccMap.containsKey(acc.id)){
+    acc.Latest_case_inserted__c= caseAccMap.get(acc.id);
+    accToBeUpdated.add(acc);
+  }
+}
+if(!accToBeUpdated.isEmpty){
+  update accToBeUpdated;
+}
+   
+
+  }}
+}
+
 }
