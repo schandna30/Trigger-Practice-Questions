@@ -116,6 +116,9 @@ public with sharing class contactTriggerHandler {
         }}
         // add error if we find any other primary account
     }
+    //send email to contacts on account type update
+    // after update 
+    
 
 
 }
